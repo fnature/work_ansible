@@ -15,7 +15,7 @@
         repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main"
         state: present
         filename: "hashicorp"
- 
+
     - name: Update APT package list
       apt:
         update_cache: yes
@@ -27,7 +27,6 @@
           - git
           - htop
           - python3-pip
-          - cherrytree
           - 7zip
           - ansible
           - postgresql-client-common
@@ -56,6 +55,8 @@
           - fontconfig # required for nvim really ?
         state: present
 
+
+
     - name: Install multiple applications with Snap
       snap:
         name:
@@ -64,6 +65,7 @@
           - bitwarden
           - libreoffice
           - curl
+          - k9s
           #- neovim
         state: present
 
@@ -75,6 +77,9 @@
         state: present
         classic: yes
 
+# echo 'export PATH=$PATH:/snap/bin' >> ~/.bashrc
+# echo 'export PATH=$PATH:/snap/k9s/current/bin' >> ~/.bashrc 
+# requires logout / login for debian to see the apps installed then...
 
     - name: Add kubectl alias to .bash_aliases
       lineinfile:
@@ -99,6 +104,26 @@
         group: root
         mode: '0644'
 
+# Install from https://github.com/neovim/neovim/releases
+# chmod u+x nvim.appimage
+# create folder /home/fnature/bin
+# mv nvim.appimage /home/fnature/nvim
+# echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
+
+
+    - name: Ensure neovim config 
+      git:
+        repo: "https://github.com/fnature/nvim"
+        dest: "/home/fnature/.config/nvim"
+        version: main
+        update: yes
+
+
+        #MANUAL ONLY
+# https://github.com/ohmyzsh/ohmyzsh
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# then it gets updated automatically
+        
 
     #- name: Ensure zsh-autosuggestions is cloned and updated
       #git:
@@ -106,8 +131,21 @@
         #dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
         #version: master
        #update: yes
+  
 
-#MANUAL ONLY
-# https://github.com/ohmyzsh/ohmyzsh
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# then it gets updated automatically
+      # https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
+      # Add the plugin to the list of plugins for Oh My Zsh to load (inside ~/.zshrc):
+
+# plugins=( 
+#     # other plugins...
+#     zsh-autosuggestions
+# )
+
+# echo 'export PATH=$PATH:/snap/bin' >> ~/.zshrc
+# echo 'export PATH=$PATH:/snap/k9s/current/bin' >> ~/.bashrc 
+# echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.zshrc
+        #
+        #
+#download https://www.giuspen.net/cherrytree/#downl
+# sudo dpkg -i package-name.deb
+
