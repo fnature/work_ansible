@@ -1,0 +1,113 @@
+---
+- name: Install multiple applications
+  hosts: localhost
+  become: yes
+  tasks:
+  
+    - name: Download and add HashiCorp GPG key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+        keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  
+    - name: Add HashiCorp repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main"
+        state: present
+        filename: "hashicorp"
+ 
+    - name: Update APT package list
+      apt:
+        update_cache: yes
+    
+    - name: Install multiple applications with APT
+      apt:
+        name:
+          - snapd
+          - git
+          - htop
+          - python3-pip
+          - cherrytree
+          - 7zip
+          - ansible
+          - postgresql-client-common
+          - postgresql-client
+          #- virtualbox #notGoodIdeaIfSecurebootisenable
+          - vagrant
+          #- neovim
+          #- pcsc-tools
+          #- pcscd
+          #- opensc
+          #- opensc-pkcs11
+          - wget
+          #- libstrongswan-standard-plugins
+          #- libstrongswan-extra-plugins
+          #- strongswan-swanctl
+          #- charon-systemd
+          - sshpass
+          - net-tools
+          - kubectx
+          #- firefox-esr
+          #- k9s
+          - zsh
+          #- markdownlint # used by nvim lint but not working still ! maybe because npm not installed ?
+          - unzip # required for nvim really ?
+          - gcc # required for nvim really ?
+          - fontconfig # required for nvim really ?
+        state: present
+
+    - name: Install multiple applications with Snap
+      snap:
+        name:
+          - chromium
+          - tree
+          - bitwarden
+          - libreoffice
+          - curl
+          #- neovim
+        state: present
+
+    - name: Install vi snap --classic
+      snap:
+        name:
+          - kubectl
+          - helm
+        state: present
+        classic: yes
+
+
+    - name: Add kubectl alias to .bash_aliases
+      lineinfile:
+        path: "/home/fnature/.bash_aliases"
+        line: "{{ item }}"
+        create: yes
+        owner: "fnature"
+      loop:
+        - "alias kubectl='kubectl'"
+        - "alias k='kubectl'"
+
+    - name: Ensure /etc/environment contains the desired configuration
+      copy:
+        dest: /etc/environment
+        content: |
+          PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+          no_proxy=192.168.1.0/24
+          NO_PROXY=192.168.1.0/24
+          GDK_DPI_SCALE=0.8
+        # GDK_DPI_SCALE is to have scale lower on my external monitor
+        owner: root
+        group: root
+        mode: '0644'
+
+
+    #- name: Ensure zsh-autosuggestions is cloned and updated
+      #git:
+        #repo: "https://github.com/zsh-users/zsh-autosuggestions"
+        #dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+        #version: master
+       #update: yes
+
+#MANUAL ONLY
+# https://github.com/ohmyzsh/ohmyzsh
+# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# then it gets updated automatically
