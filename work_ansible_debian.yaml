@@ -33,16 +33,15 @@
           - postgresql-client
           #- virtualbox #notGoodIdeaIfSecurebootisenable
           - vagrant
-          #- neovim
-          #- pcsc-tools
           #- pcscd
-          #- opensc
-          #- opensc-pkcs11
+          - opensc-pkcs11
+          - opensc
+          - pcsc-tools
           - wget
-          #- libstrongswan-standard-plugins
-          #- libstrongswan-extra-plugins
-          #- strongswan-swanctl
-          #- charon-systemd
+          - libstrongswan-standard-plugins
+          - libstrongswan-extra-plugins
+          - strongswan-swanctl
+          - charon-systemd
           - sshpass
           - net-tools
           - kubectx
@@ -53,6 +52,7 @@
           - unzip # required for nvim really ?
           - gcc # required for nvim really ?
           - fontconfig # required for nvim really ?
+          - wl-clipboard # required for neovim to system clipboard
         state: present
 
 
@@ -66,7 +66,7 @@
           - libreoffice
           - curl
           - k9s
-          #- neovim
+          - joplin-desktop
         state: present
 
     - name: Install vi snap --classic
@@ -91,6 +91,17 @@
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
 
+    - name: Add kubectl alias to .zshrc
+      lineinfile:
+        path: "/home/fnature/.zshrc"
+        line: "{{ item }}"
+        create: yes
+        owner: "fnature"
+      loop:
+        - "alias kubectl='kubectl'"
+        - "alias k='kubectl'"
+
+
     - name: Ensure /etc/environment contains the desired configuration
       copy:
         dest: /etc/environment
@@ -111,6 +122,10 @@
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
 
 
+- name: Install stuffs with non root
+  hosts: localhost
+  tasks:
+  
     - name: Ensure neovim config 
       git:
         repo: "https://github.com/fnature/nvim"
@@ -119,7 +134,21 @@
         update: yes
 
 
-        #MANUAL ONLY
+#MANUAL ONLY
+#
+# Install nerdfont for neovim
+# curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip --output JetBrainsMono.zip
+# sudo unzip JetBrainsMono.zip -d /usr/local/share/fonts
+# sudo rm -f JetBrainsMono.zip
+# sudo fc-cache -fv
+# ca permet d'avoir icons dans neotree
+
+# GNOME Terminal:
+# Open Preferences
+# Select your profile → Enable Custom Font
+# Choose JetBrainsMono Nerd Font
+# Ca permet d'avoir les icones dans la status bar dans neovim..
+
 # https://github.com/ohmyzsh/ohmyzsh
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # then it gets updated automatically
@@ -148,4 +177,5 @@
         #
 #download https://www.giuspen.net/cherrytree/#downl
 # sudo dpkg -i package-name.deb
-
+        # and I coudn't do apt install, I had unmet dependencies..
+        # sudo apt --fix-broken install
