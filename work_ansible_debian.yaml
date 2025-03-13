@@ -53,6 +53,9 @@
           - gcc # required for nvim really ?
           - fontconfig # required for nvim really ?
           - wl-clipboard # required for neovim to system clipboard
+          - nodejs # required for LSP yaml-language-server for neovim
+          - npm # required for LSP yaml-language-server for neovim
+          - rustc # install rust and cargo, required for LSP gitlab-ci-ls for neovim
         state: present
 
 
@@ -135,7 +138,7 @@
 
 
 #MANUAL ONLY
-#
+# ---------------------------------------------
 # Install nerdfont for neovim
 # curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip --output JetBrainsMono.zip
 # sudo unzip JetBrainsMono.zip -d /usr/local/share/fonts
@@ -149,11 +152,13 @@
 # Choose JetBrainsMono Nerd Font
 # Ca permet d'avoir les icones dans la status bar dans neovim..
 
+# -------------------------------------------------------
 # https://github.com/ohmyzsh/ohmyzsh
 # sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 # then it gets updated automatically
-        
 
+
+# -------------------------------------------------------
     #- name: Ensure zsh-autosuggestions is cloned and updated
       #git:
         #repo: "https://github.com/zsh-users/zsh-autosuggestions"
@@ -162,8 +167,9 @@
        #update: yes
   
 
-      # https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
-      # Add the plugin to the list of plugins for Oh My Zsh to load (inside ~/.zshrc):
+# ------------------------------------------
+# https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md
+# Add the plugin to the list of plugins for Oh My Zsh to load (inside ~/.zshrc):
 
 # plugins=( 
 #     # other plugins...
@@ -179,3 +185,12 @@
 # sudo dpkg -i package-name.deb
         # and I coudn't do apt install, I had unmet dependencies..
         # sudo apt --fix-broken install
+        #
+
+# ------------------------------------------
+# to get airpods pro 2 running
+# https://gist.github.com/aidos-dev/b49078c1d8c6bb1621e4ac199d18213b
+# sudo nano /etc/bluetooth/main.conf
+# set to ControllerMode = dual
+# sudo /etc/init.d/bluetooth restart
+# micro may not work.. more stuffs to do .. from the same link.... still not very good
