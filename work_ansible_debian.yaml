@@ -3,7 +3,47 @@
   hosts: localhost
   become: yes
   tasks:
-  
+
+
+    # ---------- Docker -------------
+    - name: Ensure required packages are installed
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Create keyrings directory (if not exists)
+      file:
+        path: /usr/share/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Docker GPG key (ASCII format)
+      get_url:
+        url: https://download.docker.com/linux/debian/gpg
+        dest: /usr/share/keyrings/docker.asc
+        mode: '0644'
+
+    - name: Get architecture
+      command: dpkg --print-architecture
+      register: arch_output
+      changed_when: false
+
+    - name: Get distribution codename
+      command: bash -c '. /etc/os-release && echo "$VERSION_CODENAME"'
+      register: codename_output
+      changed_when: false
+
+    - name: Add Docker apt repository (signed-by .asc key)
+      copy:
+        dest: /etc/apt/sources.list.d/docker.list
+        content: |
+          deb [arch={{ arch_output.stdout }} signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/debian {{ codename_output.stdout }} stable
+
+
+    # ---------- HashiCorp -------------
     - name: Download and add HashiCorp GPG key
       apt_key:
         url: https://apt.releases.hashicorp.com/gpg
@@ -15,11 +55,44 @@
         repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main"
         state: present
         filename: "hashicorp"
+ 
+    - name: Download and add virtualbox GPG key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+        keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  
+    - name: Add HashiCorp repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main"
+        state: present
+        filename: "hashicorp"
 
+    # ---------- Oracle -------------
+    - name: Download and add Oracle VirtualBox GPG key
+      ansible.builtin.get_url:
+        url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+        dest: /tmp/oracle_vbox_2016.asc
+        mode: '0644'
+
+    - name: Decrypt and store Oracle VirtualBox GPG key
+      ansible.builtin.command:
+        cmd: gpg --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg --dearmor /tmp/oracle_vbox_2016.asc
+      args:
+        creates: /usr/share/keyrings/oracle-virtualbox-2016.gpg
+
+    - name: Add VirtualBox repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] https://download.virtualbox.org/virtualbox/debian {{ ansible_lsb.codename }} contrib"
+        state: present
+        filename: "virtualbox"
+
+    # ---------- Apt Update -------------
     - name: Update APT package list
       apt:
         update_cache: yes
     
+    # ---------- Install -------------
     - name: Install multiple applications with APT
       apt:
         name:
@@ -31,7 +104,7 @@
           - ansible
           - postgresql-client-common
           - postgresql-client
-          #- virtualbox #notGoodIdeaIfSecurebootisenable
+          - virtualbox-7.1
           - vagrant
           #- pcscd
           - opensc-pkcs11
@@ -56,6 +129,14 @@
           - nodejs # required for LSP yaml-language-server for neovim
           - npm # required for LSP yaml-language-server for neovim
           - rustc # install rust and cargo, required for LSP gitlab-ci-ls for neovim
+          - ripgrep # faster than grep and required for neovim ctrlsf plugin
+          # - go # required for neovim lsp gitlab-ci-ls NOT WORKING
+          - maven
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
         state: present
 
 
@@ -67,7 +148,6 @@
           - tree
           - bitwarden
           - libreoffice
-          - curl
           - k9s
           - joplin-desktop
         state: present
@@ -194,3 +274,11 @@
 # set to ControllerMode = dual
 # sudo /etc/init.d/bluetooth restart
 # micro may not work.. more stuffs to do .. from the same link.... still not very good
+
+
+# ------------------------------------------
+# flux
+# https://fluxcd.io/flux/installation/#install-the-flux-cli
+# curl -s https://fluxcd.io/install.sh | sudo bash
+# mkdir -p ~/.oh-my-zsh/completions
+# flux completion zsh > ~/.oh-my-zsh/completions/_flux # sufficient for flux completion to work in oh my zsh
