@@ -137,6 +137,7 @@
           - containerd.io
           - docker-buildx-plugin
           - docker-compose-plugin
+          - obs-studio
         state: present
 
 
@@ -204,7 +205,20 @@
 # mv nvim.appimage /home/fnature/nvim
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
 
+# ------------------------------------------
+# Homebrew update
+    - name: Create Homebrew auto-update cron job
+      copy:
+        dest: /etc/cron.d/homebrew-cronjob
+        content: |
+          # This cron job will run every Monday at 10:00 AM
+          0 10 * * 1 root /opt/homebrew/bin/brew update && /opt/homebrew/bin/brew upgrade && /opt/homebrew/bin/brew cleanup
+        owner: root
+        group: root
+        mode: '0644'
 
+
+# ------------------DIFFERENT ANSIBLE PLAY------------------------
 - name: Install stuffs with non root
   hosts: localhost
   tasks:
@@ -216,9 +230,26 @@
         version: main
         update: yes
 
+    - name: Ensure brew shellenv is added to .zshrc
+      lineinfile:
+        path: /home/{{ ansible_user }}/.zshrc
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        state: present
+        create: yes
+      become: false
 
-#MANUAL ONLY
-# ---------------------------------------------
+    - name: Ensure glab is installed with Homebrew
+      homebrew:
+        name: glab
+        state: present
+
+
+# ---------------MANUAL ONLY------------------------------
+# Homebrew install
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Following the install there were other stuffs to add like the eval of the brew shellenv. I don't remember the others !
+
+# -------------------------------------------------------
 # Install nerdfont for neovim
 # curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip --output JetBrainsMono.zip
 # sudo unzip JetBrainsMono.zip -d /usr/local/share/fonts
