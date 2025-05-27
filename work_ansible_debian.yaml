@@ -138,7 +138,7 @@
           - docker-buildx-plugin
           - docker-compose-plugin
           - obs-studio
-          - ftp
+          - filezilla
         state: present
 
 
