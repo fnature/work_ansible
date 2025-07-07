@@ -242,9 +242,10 @@
 
     - name: Ensure glab is installed with Homebrew
       homebrew:
-        name: glab
+        name:
+          - glab
+          - argocd-autopilot
         state: present
-
 
 # ---------------MANUAL ONLY------------------------------
 # Homebrew install
