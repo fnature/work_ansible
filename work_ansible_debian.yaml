@@ -295,6 +295,11 @@
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.zshrc
         #
         #
+# Add anthropic api key for neovim avante
+# echo 'export ANTHROPIC_API_KEY=xxxxxxx' >> ~/.zshrc
+
+# ------------------------------------------
+# ????????
 #download https://www.giuspen.net/cherrytree/#downl
 # sudo dpkg -i package-name.deb
         # and I coudn't do apt install, I had unmet dependencies..
