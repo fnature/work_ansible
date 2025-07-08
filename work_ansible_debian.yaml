@@ -255,33 +255,35 @@
 
 # ---------------MANUAL ONLY------------------------------
 
+# NEOVIM
 # Install from https://github.com/neovim/neovim/releases
 # chmod u+x nvim.appimage
 # create folder /home/fnature/bin
 # mv nvim.appimage /home/fnature/nvim
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
 
-# Procedure to upgrade neovim...
-# Upgrade nvim appimage manually...
-# Run `:Lazy update` to update Lazy plugins then
-
-# Homebrew install
-# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-# Following the install there were other stuffs to add like the eval of the brew shellenv. I don't remember the others !
-
-# -------------------------------------------------------
 # Install nerdfont for neovim
 # curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/JetBrainsMono.zip --output JetBrainsMono.zip
 # sudo unzip JetBrainsMono.zip -d /usr/local/share/fonts
 # sudo rm -f JetBrainsMono.zip
 # sudo fc-cache -fv
 # ca permet d'avoir icons dans neotree
-
 # GNOME Terminal:
 # Open Preferences
 # Select your profile → Enable Custom Font
 # Choose JetBrainsMono Nerd Font
 # Ca permet d'avoir les icones dans la status bar dans neovim..
+
+# Procedure to upgrade neovim...
+# Upgrade nvim appimage manually like above...
+# Run `:Lazy update` to update Lazy plugins then
+
+# -------------------------------------------------------
+# Homebrew install
+# /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# Following the install there were other stuffs to add like the eval of the brew shellenv. I don't remember the others !
+
+# -------------------------------------------------------
 
 # -------------------------------------------------------
 # https://github.com/ohmyzsh/ohmyzsh
