@@ -308,11 +308,17 @@
 # set to ControllerMode = dual
 # sudo /etc/init.d/bluetooth restart
 # micro may not work.. more stuffs to do .. from the same link.... still not very good
-
-
 # ------------------------------------------
 # flux
 # https://fluxcd.io/flux/installation/#install-the-flux-cli
 # curl -s https://fluxcd.io/install.sh | sudo bash
 # mkdir -p ~/.oh-my-zsh/completions
 # flux completion zsh > ~/.oh-my-zsh/completions/_flux # sufficient for flux completion to work in oh my zsh
+# ------------------------------------------
+# cat /etc/environment
+# PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+# GDK_DPI_SCALE=0.8
+# http_proxy=http://direct1.proxy.i2:8080
+# https_proxy=http://direct1.proxy.i2:8080
+# no_proxy=localhost,127.0.0.1,::1,192.168.0.0/16,10.0.0.0/8
+# ------------------------------------------
