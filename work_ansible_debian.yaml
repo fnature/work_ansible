@@ -139,6 +139,7 @@
           - docker-compose-plugin
           - obs-studio
           - filezilla
+          - terminator
         state: present
 
 
