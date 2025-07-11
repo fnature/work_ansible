@@ -270,10 +270,11 @@
 # sudo fc-cache -fv
 # ca permet d'avoir icons dans neotree
 # GNOME Terminal:
-# Open Preferences
-# Select your profile → Enable Custom Font
-# Choose JetBrainsMono Nerd Font
-# Ca permet d'avoir les icones dans la status bar dans neovim..
+  # Open Preferences
+  # Select your profile → Enable Custom Font
+  # Choose JetBrainsMono Nerd Font
+  # Ca permet d'avoir les icones dans la status bar dans neovim..
+# Terminator : preferences / profile / general / Font : JetBrainsMono Nerd Font Regular 12
 
 # Procedure to upgrade neovim...
 # Upgrade nvim appimage manually like above...
