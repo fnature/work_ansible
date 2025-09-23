@@ -147,12 +147,11 @@
     - name: Install multiple applications with Snap
       snap:
         name:
-          - chromium
-          - tree
-          - bitwarden
+          - chromium # FIX
+          - tree # FIX
+          - bitwarden # FIX
           - libreoffice
           - k9s
-          - joplin-desktop
         state: present
 
     - name: Install vi snap --classic
@@ -349,15 +348,21 @@
 # no_proxy=localhost,127.0.0.1,::1,192.168.0.0/16,10.0.0.0/8
 # ------------------------------------------
 # Force Intel Tiger Lake audio to use legacy snd-hda-intel instead of SOF (fixes jack detection issues)
-- name: Force legacy HDA driver instead of SOF
-  hosts: all
-  become: yes
-  tasks:
-    - name: Ensure /etc/modprobe.d/disable-sof.conf exists with correct option
-      copy:
-        dest: /etc/modprobe.d/disable-sof.conf
-        content: |
-          options snd-intel-dspcfg dsp_driver=1
-        owner: root
-        group: root
-        mode: '0644'
+# Not working !
+# - name: Force legacy HDA driver instead of SOF
+#   hosts: all
+#   become: yes
+#   tasks:
+#     - name: Ensure /etc/modprobe.d/disable-sof.conf exists with correct option
+#       copy:
+#         dest: /etc/modprobe.d/disable-sof.conf
+#         content: |
+#           options snd-intel-dspcfg dsp_driver=1
+#           options snd-hda-intel model=dell-headset-multi
+#         owner: root
+#         group: root
+#         mode: '0644'
+# --------------------------------
+# Joplin
+#           - joplin-desktop
+# wget -O - https://raw.githubusercontent.com/laurent22/joplin/dev/Joplin_install_and_update.sh | bash
