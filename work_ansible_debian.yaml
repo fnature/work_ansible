@@ -140,6 +140,8 @@
           - obs-studio
           - filezilla
           - terminator
+          - chromium
+
         state: present
 
 
@@ -147,7 +149,6 @@
     - name: Install multiple applications with Snap
       snap:
         name:
-          - chromium # FIX
           - tree # FIX
           - bitwarden # FIX
           - libreoffice
