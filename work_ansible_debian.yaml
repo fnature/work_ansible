@@ -150,7 +150,6 @@
       snap:
         name:
           - tree # FIX
-          - bitwarden # FIX
           - libreoffice
           - k9s
         state: present
@@ -161,6 +160,7 @@
           - kubectl
           - helm
           - shotcut
+          - bitwarden
         state: present
         classic: yes
 
