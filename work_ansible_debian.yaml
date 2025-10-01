@@ -141,6 +141,7 @@
           - filezilla
           - terminator
           - chromium
+          - yq
 
         state: present
 
@@ -161,6 +162,7 @@
           - helm
           - shotcut
           - bitwarden
+          - opentofu
         state: present
         classic: yes
 
