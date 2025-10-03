@@ -142,6 +142,7 @@
           - terminator
           - chromium
           - yq
+          - tree
 
         state: present
 
@@ -150,7 +151,6 @@
     - name: Install multiple applications with Snap
       snap:
         name:
-          - tree # FIX
           - libreoffice
           - k9s
         state: present
