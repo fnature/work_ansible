@@ -255,6 +255,7 @@
         name:
           - glab
           - argocd-autopilot
+          - argocd
         state: present
 
 # ---------------MANUAL ONLY------------------------------
