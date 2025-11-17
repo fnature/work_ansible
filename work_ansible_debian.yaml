@@ -144,6 +144,7 @@
           - yq
           - tree
           - awscli
+          - clickhouse-client
 
         state: present
 
@@ -262,9 +263,9 @@
 
 # NEOVIM
 # Install from https://github.com/neovim/neovim/releases
-# chmod u+x nvim.appimage
-# create folder /home/fnature/bin
-# mv nvim.appimage /home/fnature/nvim
+chmod u+x nvim.appimage
+create folder /home/fnature/bin
+mv nvim.appimage /home/fnature/nvim
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
 
 # Install nerdfont for neovim
