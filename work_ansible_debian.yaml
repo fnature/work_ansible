@@ -192,6 +192,19 @@
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
 
+    - name: Add genpasswdd alias to .bash_aliases
+      lineinfile:
+        path: "/home/fnature/.bash_aliases"
+        line:  "alias genpasswdd=\"LC_ALL=C tr -dc '[:alnum:]' </dev/urandom | head -c 20; echo\""
+        create: yes
+        owner: "fnature"
+
+    - name: Add genpasswdd alias to .zshrc
+      lineinfile:
+        path: "/home/fnature/.zshrc"
+        line:  "alias genpasswdd=\"LC_ALL=C tr -dc '[:alnum:]' </dev/urandom | head -c 20; echo\""
+        create: yes
+        owner: "fnature"
 
 # ------------------------------------------
     # proxy stuffs and PATH
