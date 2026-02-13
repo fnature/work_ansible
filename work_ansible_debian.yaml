@@ -119,7 +119,6 @@
           - net-tools
           - kubectx
           #- firefox-esr
-          #- k9s
           - zsh
           #- markdownlint # used by nvim lint but not working still ! maybe because npm not installed ?
           - unzip # required for nvim really ?
@@ -154,7 +153,6 @@
       snap:
         name:
           - libreoffice
-          - k9s
         state: present
 
     - name: Install vi snap --classic
@@ -270,6 +268,7 @@
           - glab
           - argocd-autopilot
           - argocd
+          - k9s
         state: present
 
 # ---------------MANUAL ONLY------------------------------
