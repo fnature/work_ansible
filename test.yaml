@@ -1,0 +1,25 @@
+
+# to run : 
+#  ansible-playbook -i localhost work_ansible_debian.yaml -K -v --check --diff
+#  ansible-playbook -i localhost work_ansible_debian.yaml -K -v
+---
+- name: Install multiple applications
+  hosts: localhost
+  become: yes
+  tasks:
+
+    - name: Show PATH
+      command: echo $PATH
+      register: path_out
+      changed_when: false
+
+    - debug:
+        var: path_out.stdout
+
+    # - name: Check brew
+    #   command: which brew
+    #   register: brew_path
+    #   changed_when: false
+    #
+    # - debug:
+    #     var: brew_path.stdout   

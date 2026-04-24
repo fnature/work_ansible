@@ -1,9 +1,45 @@
+# to run : 
+#  ansible-playbook -i localhost work_ansible_debian.yaml -K -v --check --diff
+#  ansible-playbook -i localhost work_ansible_debian.yaml -K -v
 ---
+- name: Install Homebrew packages (user context)
+  hosts: localhost
+  become: false
+  tasks:
+
+    - name: Ensure brew shellenv is added to .zshrc
+      lineinfile:
+        path: /home/fnature/.zshrc
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+        state: present
+        create: yes
+
+    - name: Ensure stuffs installed with Homebrew
+      homebrew:
+        path: /home/linuxbrew/.linuxbrew/bin
+        name:
+          - glab
+          - argocd-autopilot
+          - argocd
+          - k9s
+          - helm@3
+        state: present
+
 - name: Install multiple applications
   hosts: localhost
   become: yes
   tasks:
 
+    # ---------- Homebrew -------------
+    - name: Create Homebrew auto-update cron job
+      copy:
+        dest: /etc/cron.d/homebrew-cronjob
+        content: |
+          # This cron job will run every Monday at 10:00 AM
+          0 10 * * 1 fnature /home/linuxbrew/.linuxbrew/bin/brew update && /home/linuxbrew/.linuxbrew/bin/brew upgrade && /home/linuxbrew/.linuxbrew/bin/brew cleanup
+        owner: root
+        group: root
+        mode: '0644'
 
     # ---------- Docker -------------
     - name: Ensure required packages are installed
@@ -142,8 +178,8 @@
           - chromium
           - yq
           - tree
-          - awscli
-          - clickhouse-client
+          # - awscli
+          # - clickhouse-client
 
         state: present
 
@@ -155,11 +191,10 @@
           - libreoffice
         state: present
 
-    - name: Install vi snap --classic
+    - name: Install via snap --classic
       snap:
         name:
           - kubectl
-          - helm
           - shotcut
           - bitwarden
           - opentofu
@@ -205,6 +240,34 @@
         owner: "fnature"
 
 # ------------------------------------------
+# helm specific
+
+    - name: Ensure ~/bin exists
+      file:
+        path: /home/fnature/bin
+        state: directory
+        mode: '0755'
+
+    - name: Symlink helm -> helm3
+      file:
+        src: /snap/bin/helm3
+        dest: /home/fnature/bin/helm
+        state: link
+        force: true
+
+    - name: Ensure ~/bin is in PATH (zsh)
+      lineinfile:
+        path: /home/fnature/.zshrc
+        line: 'export PATH="/home/fnature/bin:$PATH"'
+        state: present
+
+    - name: Ensure ~/bin is in PATH (bash)
+      lineinfile:
+        path: /home/fnature/.bashrc
+        line: 'export PATH="/home/fnature/bin:$PATH"'
+        state: present
+
+# ------------------------------------------
     # proxy stuffs and PATH
 
     - name: Ensure /etc/environment contains the desired configuration
@@ -229,24 +292,8 @@
       loop:
         - "proxy = 'http://direct1.proxy.i2:8080'"
 
-# ------------------------------------------
-# Homebrew update
-    - name: Create Homebrew auto-update cron job
-      copy:
-        dest: /etc/cron.d/homebrew-cronjob
-        content: |
-          # This cron job will run every Monday at 10:00 AM
-          0 10 * * 1 root /opt/homebrew/bin/brew update && /opt/homebrew/bin/brew upgrade && /opt/homebrew/bin/brew cleanup
-        owner: root
-        group: root
-        mode: '0644'
-
 
 # ------------------DIFFERENT ANSIBLE PLAY------------------------
-- name: Install stuffs with non root
-  hosts: localhost
-  tasks:
-  
     - name: Ensure neovim config 
       git:
         repo: "https://github.com/fnature/nvim"
@@ -254,30 +301,14 @@
         version: main
         update: yes
 
-    - name: Ensure brew shellenv is added to .zshrc
-      lineinfile:
-        path: /home/{{ ansible_user }}/.zshrc
-        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
-        state: present
-        create: yes
-      become: false
-
-    - name: Ensure stuffs installed with Homebrew
-      homebrew:
-        name:
-          - glab
-          - argocd-autopilot
-          - argocd
-          - k9s
-        state: present
 
 # ---------------MANUAL ONLY------------------------------
 
 # NEOVIM
 # Install from https://github.com/neovim/neovim/releases
-chmod u+x nvim.appimage
-create folder /home/fnature/bin
-mv nvim.appimage /home/fnature/nvim
+# chmod u+x nvim.appimage
+# create folder /home/fnature/bin
+# mv nvim.appimage /home/fnature/nvim
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
 
 # Install nerdfont for neovim
