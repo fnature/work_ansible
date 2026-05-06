@@ -107,9 +107,18 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export PATH=$PATH:/snap/bin
 export PATH=$PATH:/home/fnature/bin
-
-
 export PATH=$PATH:/snap
 export PATH=$PATH:/snap/k9s/current/bin
+export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin/fabric-ai
+
+
 alias kubectl='kubectl'
 alias k='kubectl'
+alias archi='/home/fnature/bin/Archi/Archi.sh &'
+alias genpasswdd="LC_ALL=C tr -dc '[:alnum:]' </dev/urandom | head -c 25; echo"
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+export KUBECONFIG=~/local/kubeconfig/kubeconfig-k8s-par-elated-joliot.yaml
+alias genpasswdd="LC_ALL=C tr -dc '[:alnum:]' </dev/urandom | head -c 20; echo"
+export PATH="/home/fnature/bin:$PATH"

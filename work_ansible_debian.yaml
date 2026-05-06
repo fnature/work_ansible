@@ -1,4 +1,4 @@
-# to run : 
+#  o run : 
 #  ansible-playbook -i localhost work_ansible_debian.yaml -K -v --check --diff
 #  ansible-playbook -i localhost work_ansible_debian.yaml -K -v
 ---
@@ -307,8 +307,8 @@
 # NEOVIM
 # Install from https://github.com/neovim/neovim/releases
 # chmod u+x nvim.appimage
-# create folder /home/fnature/bin
-# mv nvim.appimage /home/fnature/nvim
+# create folder /home/fnature/bin/nvim
+# mv nvim.appimage /home/fnature/bin/nvim
 # echo 'export PATH=$PATH:/home/fnature/bin' >> ~/.bashrc
 
 # Install nerdfont for neovim
@@ -324,7 +324,7 @@
   # Ca permet d'avoir les icones dans la status bar dans neovim..
 # Terminator : preferences / profile / general / Font : JetBrainsMono Nerd Font Regular 12
 
-# Procedure to upgrade neovim...
+# Procedure to upgrade plugins...
 # Upgrade nvim appimage manually like above...
 # Run `:Lazy update` to update Lazy plugins then
 
