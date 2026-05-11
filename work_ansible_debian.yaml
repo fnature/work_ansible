@@ -178,6 +178,7 @@
           - chromium
           - yq
           - tree
+          - unattended-upgrades # to have automatic security updates
           # - awscli
           # - clickhouse-client
 
@@ -301,6 +302,19 @@
         version: main
         update: yes
 
+
+# ------------------ Unattend-upgrades ------------------------
+    - name: Ensure unattended-upgrades configuration for automatic updates
+      ansible.builtin.copy:
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+          APT::Periodic::AutocleanInterval "7";
+        owner: root
+        group: root
+        mode: '0644'
+        backup: yes
 
 # ---------------MANUAL ONLY------------------------------
 
