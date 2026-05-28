@@ -127,6 +127,10 @@
     - name: Update APT package list
       apt:
         update_cache: yes
+
+    - name: Upgrade installed APT packages
+      apt:
+        upgrade: yes
     
     # ---------- Install -------------
     - name: Install multiple applications with APT
@@ -215,6 +219,7 @@
       loop:
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
+        - "alias hermes='docker exec -it hermes /opt/hermes/.venv/bin/hermes'"
 
     - name: Add kubectl alias to .zshrc
       lineinfile:
@@ -225,6 +230,7 @@
       loop:
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
+        - "alias hermes='docker exec -it hermes /opt/hermes/.venv/bin/hermes'"
 
     - name: Add genpasswdd alias to .bash_aliases
       lineinfile:
@@ -284,14 +290,14 @@
         group: root
         mode: '0644'
 
-    - name: Add proxy to .curlrc
-      lineinfile:
-        path: "/home/fnature/.curlrc"
-        line: "{{ item }}"
-        create: yes
-        owner: "fnature"
-      loop:
-        - "proxy = 'http://direct1.proxy.i2:8080'"
+    # - name: Add proxy to .curlrc
+    #   lineinfile:
+    #     path: "/home/fnature/.curlrc"
+    #     line: "{{ item }}"
+    #     create: yes
+    #     owner: "fnature"
+    #   loop:
+    #     - "proxy = 'http://direct1.proxy.i2:8080'"
 
 
 # ------------------DIFFERENT ANSIBLE PLAY------------------------
