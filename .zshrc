@@ -122,3 +122,7 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 export KUBECONFIG=~/local/kubeconfig/kubeconfig-k8s-par-elated-joliot.yaml
 alias genpasswdd="LC_ALL=C tr -dc '[:alnum:]' </dev/urandom | head -c 20; echo"
 export PATH="/home/fnature/bin:$PATH"
+
+export ANTHROPIC_API_KEY=""
+export MISTRAL_API_KEY=""
+alias hermes='docker exec -u hermes -it hermes /opt/hermes/.venv/bin/hermes'
