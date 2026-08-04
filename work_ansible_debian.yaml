@@ -23,6 +23,7 @@
           - argocd
           - k9s
           - helm@3
+          - trivy
         state: present
 
 - name: Install multiple applications
@@ -183,6 +184,7 @@
           - yq
           - tree
           - unattended-upgrades # to have automatic security updates
+          - libarchive-tools # for ecokube script to get command bsdtar...
           # - awscli
           # - clickhouse-client
 
