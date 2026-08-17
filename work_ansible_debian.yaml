@@ -187,6 +187,7 @@
           - libarchive-tools # for ecokube script to get command bsdtar...
           # - awscli
           # - clickhouse-client
+          - tcpdump
 
         state: present
 
