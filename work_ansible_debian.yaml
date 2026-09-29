@@ -234,6 +234,9 @@
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
         - "alias hermes='docker exec -it hermes /opt/hermes/.venv/bin/hermes'"
+        - "alias nv='nvim'"
+        - "mcp-read='/home/fnature/Documents/dev/hermes/hermes-docker/scripts/kubernetes-mcp-readonly-portforward.sh'"
+        - "mcp-write='/home/fnature/Documents/dev/hermes/hermes-docker/scripts/kubernetes-mcp-write-portforward.sh'"
 
     - name: Add genpasswdd alias to .bash_aliases
       lineinfile:
