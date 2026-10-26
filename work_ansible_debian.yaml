@@ -24,6 +24,8 @@
           - k9s
           - helm@3
           - trivy
+          - restic
+          - rclone
         state: present
 
 - name: Install multiple applications
@@ -188,7 +190,8 @@
           # - awscli
           # - clickhouse-client
           - tcpdump
-
+          - python3-openstackclient
+          - python3.11-venv
         state: present
 
 
