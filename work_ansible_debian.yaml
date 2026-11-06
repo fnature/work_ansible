@@ -194,7 +194,7 @@
           - tcpdump
           - python3-openstackclient
           - python3.11-venv
-          - imagemagick
+          - imagemagick # image processing tool that Neovim plugins like Snacks.image and image.nvim use to prepare images for display inside the terminal.
         state: present
 
 
