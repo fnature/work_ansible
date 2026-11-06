@@ -170,7 +170,9 @@
           - wl-clipboard # required for neovim to system clipboard
           - nodejs # required for LSP yaml-language-server for neovim
           - npm # required for LSP yaml-language-server for neovim
-          - rustc # install rust and cargo, required for LSP gitlab-ci-ls for neovim
+           # install rust and cargo, required for LSP gitlab-ci-ls for neovim
+          # UPDATE 30 oct 2026 - I removed rustc and installed with ttps://rust-lang.org/tools/install/ for the purpose of bdxio lab
+          # - rustc
           - ripgrep # faster than grep and required for neovim ctrlsf plugin
           # - go # required for neovim lsp gitlab-ci-ls NOT WORKING
           - maven
@@ -192,6 +194,7 @@
           - tcpdump
           - python3-openstackclient
           - python3.11-venv
+          - imagemagick
         state: present
 
 
