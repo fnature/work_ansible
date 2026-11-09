@@ -1,0 +1,57 @@
+---
+- name: Install Teams for Linux on Debian Bookworm
+  hosts: localhost
+  become: true
+  tags: [teams]
+
+  tasks:
+    - name: Ensure system is Debian 12 amd64
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] == "Debian"
+          - ansible_facts['distribution_major_version'] == "12"
+          - ansible_facts['architecture'] == "x86_64"
+        fail_msg: Teams for Linux installation requires Debian 12 on amd64.
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+        state: present
+        update_cache: true
+
+    - name: Create APT keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download Teams for Linux signing key
+      ansible.builtin.get_url:
+        url: https://repo.teamsforlinux.de/teams-for-linux.asc
+        dest: /etc/apt/keyrings/teams-for-linux.asc
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Configure Teams for Linux APT repository
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/teams-for-linux-packages.sources
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          Types: deb
+          URIs: https://repo.teamsforlinux.de/debian/
+          Suites: stable
+          Components: main
+          Signed-By: /etc/apt/keyrings/teams-for-linux.asc
+          Architectures: amd64
+
+    - name: Install Teams for Linux
+      ansible.builtin.apt:
+        name: teams-for-linux
+        state: present
+        update_cache: true

@@ -5,6 +5,7 @@
 - name: Install Homebrew packages (user context)
   hosts: localhost
   become: false
+  tags: [homebrew]
   tasks:
 
     - name: Ensure brew shellenv is added to .zshrc
@@ -31,6 +32,8 @@
 - name: Install multiple applications
   hosts: localhost
   become: yes
+  # A Kitty-only run must not request sudo just to gather unused system facts.
+  tags: [system]
   tasks:
 
     # ---------- Homebrew -------------
@@ -228,7 +231,6 @@
       loop:
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
-        - "alias hermes='docker exec -it hermes /opt/hermes/.venv/bin/hermes'"
 
     - name: Add kubectl alias to .zshrc
       lineinfile:
@@ -239,10 +241,7 @@
       loop:
         - "alias kubectl='kubectl'"
         - "alias k='kubectl'"
-        - "alias hermes='docker exec -it hermes /opt/hermes/.venv/bin/hermes'"
         - "alias nv='nvim'"
-        - "mcp-read='/home/fnature/Documents/dev/hermes/hermes-docker/scripts/kubernetes-mcp-readonly-portforward.sh'"
-        - "mcp-write='/home/fnature/Documents/dev/hermes/hermes-docker/scripts/kubernetes-mcp-write-portforward.sh'"
 
     - name: Add genpasswdd alias to .bash_aliases
       lineinfile:
@@ -336,6 +335,14 @@
         group: root
         mode: '0644'
         backup: yes
+
+# Kitty only: ansible-playbook -i localhost, -c local work_ansible_debian.yaml --tags kitty
+- name: Import Kitty installation and desktop launcher
+  ansible.builtin.import_playbook: kitty.yaml
+
+# Teams only: ansible-playbook -i localhost, -c local work_ansible_debian.yaml --tags teams -K
+- name: Import Teams for Linux installation
+  ansible.builtin.import_playbook: teams-for-linux.yaml
 
 # ---------------MANUAL ONLY------------------------------
 

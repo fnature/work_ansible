@@ -1,0 +1,148 @@
+---
+# Standalone: ansible-playbook -i localhost, -c local kitty.yaml
+# Imported:  ansible-playbook -i localhost, -c local work_ansible_debian.yaml --tags kitty
+# Preview either command with --check --diff. Force an update with -e kitty_update=true.
+- name: Install official Kitty and its desktop launcher
+  hosts: localhost
+  become: false
+  tags: [kitty]
+  vars:
+    kitty_install_dir: "{{ ansible_env.HOME }}/.local/kitty.app"
+    kitty_launcher_dir: "{{ ansible_env.HOME }}/.local/share/applications"
+    kitty_installer_cache_dir: "{{ ansible_env.HOME }}/.cache/kitty-installer"
+    kitty_minimum_version: '0.28.0'
+    kitty_update: false
+
+  tasks:
+    - name: Require Linux and the official installation directory layout
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['system'] == 'Linux'
+          - kitty_install_dir | basename == 'kitty.app'
+          - kitty_install_dir.startswith('/')
+        fail_msg: Kitty must be installed in an absolute Linux path ending in kitty.app.
+
+    - name: Check for an existing user-local Kitty binary
+      ansible.builtin.stat:
+        path: "{{ kitty_install_dir }}/bin/kitty"
+      register: kitty_existing_binary
+
+    - name: Read the installed Kitty version without launching a window
+      ansible.builtin.command:
+        argv:
+          - "{{ kitty_install_dir }}/bin/kitty"
+          - --version
+      register: kitty_existing_version
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      when: kitty_existing_binary.stat.exists
+
+    - name: Determine whether Kitty needs installation or an explicit update
+      ansible.builtin.set_fact:
+        kitty_install_required: >-
+          {{ (kitty_update | bool)
+             or (kitty_existing_version.rc | default(1)) != 0
+             or ((kitty_existing_version.stdout | default('')
+                  | regex_search('[0-9]+[.][0-9]+[.][0-9]+')
+                  | default('0.0.0', true)) is version(kitty_minimum_version, '<')) }}
+
+    - name: Preview a required Kitty installation
+      ansible.builtin.debug:
+        msg: >-
+          Would install the latest official stable Kitty into {{ kitty_install_dir }}
+          and create {{ kitty_launcher_dir }}/kitty.desktop. No installer is run in check mode.
+      changed_when: true
+      when:
+        - ansible_check_mode
+        - kitty_install_required | bool
+
+    - name: Install or update Kitty from the official user-local installer
+      when:
+        - kitty_install_required | bool
+        - not ansible_check_mode
+      block:
+        - name: Ensure the Kitty installation parent exists
+          ansible.builtin.file:
+            path: "{{ kitty_install_dir | dirname }}"
+            state: directory
+            mode: '0755'
+
+        - name: Ensure a private installer cache exists
+          ansible.builtin.file:
+            path: "{{ kitty_installer_cache_dir }}"
+            state: directory
+            mode: '0700'
+
+        - name: Download the official Kitty installer
+          ansible.builtin.get_url:
+            url: https://sw.kovidgoyal.net/kitty/installer.sh
+            dest: "{{ kitty_installer_cache_dir }}/installer.sh"
+            mode: '0600'
+            timeout: 30
+
+        - name: Install the latest stable Kitty without opening a terminal window
+          ansible.builtin.command:
+            argv:
+              - sh
+              - "{{ kitty_installer_cache_dir }}/installer.sh"
+              # The official installer appends /kitty.app to dest.
+              - "dest={{ kitty_install_dir | dirname }}"
+              - launch=n
+          changed_when: true
+
+    - name: Validate Kitty and install its desktop launcher
+      when: not (ansible_check_mode and (kitty_install_required | bool))
+      block:
+        - name: Verify the installed Kitty version
+          ansible.builtin.command:
+            argv:
+              - "{{ kitty_install_dir }}/bin/kitty"
+              - --version
+          register: kitty_installed_version
+          changed_when: false
+          check_mode: false
+
+        - name: Require Unicode-placeholder image support
+          ansible.builtin.assert:
+            that:
+              - >-
+                (kitty_installed_version.stdout
+                 | regex_search('[0-9]+[.][0-9]+[.][0-9]+')
+                 | default('0.0.0', true)) is version(kitty_minimum_version, '>=')
+            fail_msg: "Kitty {{ kitty_minimum_version }} or newer is required for Snacks inline images."
+
+        - name: Check the official Kitty installation assets
+          ansible.builtin.stat:
+            path: "{{ kitty_install_dir }}/{{ item }}"
+          loop:
+            - share/applications/kitty.desktop
+            - share/icons/hicolor/256x256/apps/kitty.png
+          register: kitty_launcher_files
+
+        - name: Require the official desktop launcher and icon
+          ansible.builtin.assert:
+            that:
+              - kitty_launcher_files.results | map(attribute='stat.exists') | min
+            fail_msg: "The official Kitty installation is incomplete at {{ kitty_install_dir }}."
+
+        - name: Ensure the user application directory exists
+          ansible.builtin.file:
+            path: "{{ kitty_launcher_dir }}"
+            state: directory
+            mode: '0755'
+
+        - name: Read Kitty's official desktop launcher
+          ansible.builtin.slurp:
+            src: "{{ kitty_install_dir }}/share/applications/kitty.desktop"
+          register: kitty_official_desktop
+
+        - name: Install the launcher with absolute binary and official icon paths
+          ansible.builtin.copy:
+            dest: "{{ kitty_launcher_dir }}/kitty.desktop"
+            mode: '0644'
+            content: >-
+              {{ kitty_official_desktop.content | b64decode
+                 | regex_replace('(?m)^Exec=kitty(?= |$)', 'Exec=' ~ kitty_install_dir ~ '/bin/kitty')
+                 | regex_replace('(?m)^TryExec=kitty$', 'TryExec=' ~ kitty_install_dir ~ '/bin/kitty')
+                 | regex_replace('(?m)^Icon=kitty$', 'Icon=' ~ kitty_install_dir ~ '/share/icons/hicolor/256x256/apps/kitty.png') }}
