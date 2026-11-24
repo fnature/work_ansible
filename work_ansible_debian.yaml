@@ -27,6 +27,7 @@
           - trivy
           - restic
           - rclone
+          - nodejs
         state: present
 
 - name: Install multiple applications
@@ -171,7 +172,7 @@
           - gcc # required for nvim really ?
           - fontconfig # required for nvim really ?
           - wl-clipboard # required for neovim to system clipboard
-          - nodejs # required for LSP yaml-language-server for neovim
+          # - nodejs # required for LSP yaml-language-server for neovim
           - npm # required for LSP yaml-language-server for neovim
            # install rust and cargo, required for LSP gitlab-ci-ls for neovim
           # UPDATE 30 oct 2026 - I removed rustc and installed with ttps://rust-lang.org/tools/install/ for the purpose of bdxio lab
