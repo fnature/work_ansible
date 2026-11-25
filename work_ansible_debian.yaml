@@ -202,6 +202,20 @@
           - vault
         state: present
 
+    # ---------- Vulkan (GPU compute) -------------
+    # This machine has no NVIDIA GPU: the only llama.cpp/qmd GPU backend is Vulkan via Mesa (Intel Iris Xe).
+    # Vulkan only: ansible-playbook -i localhost, -c local work_ansible_debian.yaml --tags vulkan -K --check --diff
+    # Remove --check to apply.
+    - name: Install Vulkan runtime packages for GPU compute (qmd/llama.cpp)
+      apt:
+        name:
+          - libvulkan1
+          - mesa-vulkan-drivers
+          - vulkan-tools
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+      tags: [vulkan]
 
 
     - name: Install multiple applications with Snap
